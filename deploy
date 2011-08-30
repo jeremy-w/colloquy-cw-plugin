@@ -2,6 +2,5 @@
 PLUGIN_DIR="$HOME/Library/Application Support/Colloquy/PlugIns"
 install -d "$PLUGIN_DIR"
 install cw.fscript "$PLUGIN_DIR"
-echo <<EOF
-run '/fscript load cw' or '/fscript reload cw' in Colloquy to load the latest version"
-EOF
+echo "run '/fscript load cw' or \
+'/fscript reload cw' in Colloquy to load the latest version"
