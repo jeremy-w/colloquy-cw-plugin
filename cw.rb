@@ -14,8 +14,20 @@ NAME = File.basename(__FILE__)
 def log(msg)
   puts "#{NAME}: #{msg}"
 end
-log 'launched'
 
+ebook2cw = `/usr/bin/which ebook2cw`.strip!
+if not ebook2cw or not File.exists? ebook2cw then
+  DIR = File.dirname(__FILE__)
+  ebook2cw = DIR + "/ebook2cw"
+  if not File.exists? ebook2cw then
+    log "ERROR: ebook2cw not found!"
+    exit
+  end
+end
+# IO.popen() needs shell-style quoting.
+ebook2cw = %Q("#{ebook2cw}")
+
+log 'launched'
 continue = true
 thread = Thread.start(text_queue) do |q|
   loop do
@@ -29,10 +41,10 @@ thread = Thread.start(text_queue) do |q|
 
     if not text.nil? then
       log "spawning cw process for: #{text}"
-      cw = IO.popen('ebook2cw', 'w')
-      log "spawned pid #{cw.pid}"
-      cw.write text
-      cw.close
+      IO.popen(ebook2cw, 'w') do |cw|
+        log "spawned pid #{cw.pid}"
+        cw.write text
+      end
 
       if File.exists? AUDIO_FILE then
         puts 'playing audio'
@@ -47,6 +59,7 @@ thread = Thread.start(text_queue) do |q|
 end
 
 while text = gets do
+  log "got line: #{text}"
   mutex.synchronize do
     text_queue << text
     cv.signal
