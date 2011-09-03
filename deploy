@@ -1,7 +1,9 @@
 #!/bin/bash
 PLUGIN_DIR="$HOME/Library/Application Support/Colloquy/PlugIns"
-install -d "$PLUGIN_DIR"
+PLUGIN_CW="$PLUGIN_DIR"/cw
+install -d "$PLUGIN_CW"
 install cw.fscript "$PLUGIN_DIR"
-install cw.rb "$PLUGIN_DIR"
+install cw.rb "$PLUGIN_CW"
+install `which ebook2cw` "$PLUGIN_CW"
 echo "run '/fscript load cw' or \
 '/fscript reload cw' in Colloquy to load the latest version"
