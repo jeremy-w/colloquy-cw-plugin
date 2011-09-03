@@ -1,94 +1,91 @@
 "called on load and reload"
 load := [ :scriptFilePath |
-
 ].
 
 "called on unload and relead"
 unload := [
-
 ].
 
-"return an array of NSMenuItems that should be dispalyed for 'object' associated with 'view'"
-contextualMenuItems := [ :object :view |
-	{}.
+"return an array of NSMenuItems that should be dispalyed for 'item' associated with 'view'"
+contextualMenuItems := [ :item :view |
+].
+
+"return an array of toolbar item identifier strings that can be associated with 'view'"
+toolbarItemIdentifiers := [ :view |
+].
+
+"return a NSToolbarItem for 'identifier' associated with 'view'"
+toolbarItem := [ :identifier :view :willBeInserted |
 ].
 
 "process the command and return true if you handle it or false to pass on to another plugin"
 processUserCommand := [ :command :arguments :connection :view |
-	false.
+	"return YES if the command was handled or to prevent other plugins or Colloquy from handling it"
+	NO.
 ].
 
 "handle a ctcp request and return true if you handle it or false to pass on to another plugin"
 processSubcodeRequest := [ :command :arguments :user |
-	false.
+	"return YES if the command was handled or to prevent other plugins or Colloquy from handling it"
+	NO.
 ].
 
 "handle a ctcp reply and return true if you handle it or false to pass on to another plugin"
 processSubcodeReply := [ :command :arguments :user |
-	false.
+	"return YES if the command was handled or to prevent other plugins or Colloquy from handling it"
+	NO.
 ].
 
 "called when 'connection' connects"
 connected := [ :connection |
-	nil.
 ].
 
 "called when 'connection' is disconnecting"
 disconnecting := [ :connection |
-	nil.
 ].
 
 "perform a notification"
 performNotification := [ :identifier :context :preferences |
-	nil.
 ].
 
 "called when an unhandled URL scheme is clicked in 'view'"
 handleClickedLink := [ :url :view |
-	false.
+	"return true if the link was handled or to prevent other plugins or Colloquy from handling it"
+	NO.
 ].
 
-"called for each incoming message, the message is mutable"
+"called for each incoming message :the message is mutable"
 processIncomingMessage := [ :message :view |
-	nil.
 ].
 
-"called for each outgoing message, the message is mutable"
+"called for each outgoing message :the message is mutable"
 processOutgoingMessage := [ :message :view |
-	nil.
 ].
 
 "called when a member joins 'room'"
 memberJoined := [ :member :room |
-	nil.
 ].
 
 "called when a member parts 'room'"
-memberParted := [ :member :room |
-	nil.
+memberParted := [ :member :room :reason |
 ].
 
 "called when a member is kicked from 'room' for 'reason'"
 memberKicked := [ :member :room :by :reason |
-	nil.
 ].
 
 "called when the local user joins 'room'"
 joinedRoom := [ :room |
-	nil.
 ].
 
 "called when the local user is parting 'room'"
 partingFromRoom := [ :room |
-	nil.
 ].
 
 "called when the local user is kicked from 'room' for 'reason'"
 kickedFromRoom := [ :room :by :reason |
-	nil.
 ].
 
-"called when the topic changes in 'room'"
-topicChanged := [ :topic :room :author |
-	nil.
+"called when the topic changes in 'room' by 'user'"
+topicChanged := [ :topic :room :user |
 ].
