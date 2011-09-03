@@ -53,9 +53,11 @@ task_stop := [ :task |
 
 task_write := [ :task :msg |
 	ifTask value:task value:[
-		|data|
+		|data h|
+		msg := msg stringByAppendingString:'\n'.
 		data := msg dataUsingEncoding:NSUTF8StringEncoding.
-		(task_stdin value:task) writeData:data.
+		h := task_stdin value:task.
+		h writeData:data.
 	].
 ].
 
