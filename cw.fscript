@@ -7,7 +7,7 @@ TASK := nil.
 "Launches +path+ with a pipe for stdin."
 task_launch := [ :path |
 	|task pipe|
-	task := NSTask alloc init.
+	task := NSTask alloc init autorelease.
 	task setLaunchPath:path.
 	"arguments automatically includes launchPath as $0."
 
@@ -15,10 +15,10 @@ task_launch := [ :path |
 	task setStandardInput:pipe.
 	pipe := nil.
 
-	sys log:'about to launch task'.
-	task launch.
-	sys log:'did launch task'.
-	^task.
+	[ task launch ] onException: [:e|
+		sys log:('exception launching task: ' ++ (e description))
+	].
+	task.
 ].
 
 ifTask := [ :task :trueBlock |
@@ -28,18 +28,26 @@ ifTask := [ :task :trueBlock |
 ].
 
 task_stdin := [ :task |
+	|handle|
 	ifTask value:task value:[
-		|pipe handle|
+		|pipe|
+		sys log: 'grabbing pipe.'.
 		pipe := task standardInput.
+		sys log: 'got pipe'.
 		handle := pipe fileHandleForWriting.
 	].
+	handle.
 ].
 
 task_stop := [ :task |
+	sys log:'in task_stop'.
 	ifTask value:task value:[
 		|handle|
+		sys log: 'stopping task by closing stdin'.
 		handle := task_stdin value:task.
-		handle closeFile.
+		sys log: 'closing now'.
+		handle ~~ nil ifTrue:[handle closeFile].
+		sys log: 'did close'.
 	].
 ].
 
@@ -58,16 +66,16 @@ load := [ :scriptFilePath |
 
 	dir := scriptFilePath stringByDeletingLastPathComponent.
 	path := dir stringByAppendingPathComponent:'cw/cw.rb'.
-	sys log:'launching file at ' ++ path.
 	TASK := task_launch value:path.
-	ifTask value:task value:[ sys log:'Launched generator task ' ].
-	sys log:'TESTING'.
+	ifTask value:TASK value:[ sys log:'Launched cw generator task'. ].
 ].
 
 "called on unload and reload"
 unload := [
+	sys log:'unload: calling task_stop'.
 	task_stop value:TASK.
 	sys log:'Colloquy cw plugin unloaded'.
+	nil.
 ].
 
 "return an array of NSMenuItems that should be dispalyed for 'object' associated with 'view'"
@@ -89,7 +97,8 @@ performNotification := [ :identifier :context :preferences |
 	|msg title desc|
 	title := context at:'title'.
 	desc := context at:'description'.
-	msg := 'vvv ' ++ title ++ ' ' ++ title ++ ' = ' ++ description ++ ' ==='.
+	msg := 'vvv <CT> <CT> ' ++ title ++ ' = ' ++ title ++ ' = ' ++
+		desc ++ ' <AR> = <AR>'.
 	sys log: msg.
 	write_task value:TASK value:msg.
 ].
@@ -99,20 +108,22 @@ performNotification := [ :identifier :context :preferences |
  view : id<JVChatViewController>
  returns void."
 processIncomingMessage := [ :message :view |
-	|sender body text|
-	sender := message sender.
-	body := message messageAsPlainText.
-	text := message isAction
-		ifTrue: [sender ++ ' '  ++ body]
-		ifFalse:[sender ++ ': ' ++ body].
+	|sender body text room|
+	sender := message senderNickname.
+	body := message bodyAsPlainText.
+	room := view target name.
+	text := (message isAction)
+		ifTrue:[room ++ ' DE ' ++ sender ++ ' = ' ++ sender ++ ' '  ++ body ++ ' <AR>']
+		ifFalse:[room ++ ' DE ' ++ sender ++ ' = ' ++ body ++ ' <AR> K'].
 	task_write value:TASK value:text.
-
-	sys log:'processIncomingMessage: [' ++ text ++ '] (' ++ view name ++ ')'.
+	sys log:'processIncomingMessage: [' ++ text ++ ']'.
 ].
 
 "called when the topic changes in 'room'"
 "  topic - NSMutableAttributedString"
-topicChanged := [ :topic :room :user |
+topicChanged := [ :topic :view :user |
+	|room|
+	room := view target.
 	sys log:'topicChanged: ' ++ (topic string) ++
 		' room ' ++ (room name) ++ ' by ' ++ (user description).
 	nil.
