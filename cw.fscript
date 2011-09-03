@@ -95,8 +95,8 @@ processUserCommand := [ :command :arguments :connection :view |
 "perform a notification"
 performNotification := [ :identifier :context :preferences |
 	|msg title desc|
-	title := context at:'title'.
-	desc := context at:'description'.
+	title := (context at:'title') string.
+	desc := (context at:'description') string.
 	msg := 'vvv <CT> <CT> ' ++ title ++ ' = ' ++ title ++ ' = ' ++
 		desc ++ ' <AR> = <AR>'.
 	sys log: msg.
@@ -122,9 +122,12 @@ processIncomingMessage := [ :message :view |
 "called when the topic changes in 'room'"
 "  topic - NSMutableAttributedString"
 topicChanged := [ :topic :view :user |
-	|room|
-	room := view target.
-	sys log:'topicChanged: ' ++ (topic string) ++
-		' room ' ++ (room name) ++ ' by ' ++ (user description).
+	|room who msg|
+	room := view target name.
+	who := user nickname.
+	msg := 'vvv ' ++ room ++ ' de ' ++ who ++
+		' = QUA? QUA? = ' ++ (topic string) ++ ' <AR>'.
+	task_write value:TASK value:msg.
+	sys log: msg.
 	nil.
 ].
