@@ -2,8 +2,7 @@
 ## Reads text from stdin and pipes through a toolchain
 ## to play the corresponding CW.
 require 'thread'
-
-AUDIO_FILE = 'Chapter0000.mp3'
+require 'tempfile'
 
 options = {}
 text_queue = []
@@ -24,8 +23,16 @@ if not ebook2cw or not File.exists? ebook2cw then
     exit
   end
 end
-# IO.popen() needs shell-style quoting.
-ebook2cw = %Q("#{ebook2cw}")
+
+# Returns a command string for IO.popen including the current options.
+def current_command(ebook2cw, options)
+  # IO.popen() needs shell-style quoting.
+  cmd = '"' + ebook2cw + '"'
+  options.each do |k, v|
+    cmd += %Q{ -#{k} "#{v}"}
+  end
+  cmd
+end
 
 log 'launched'
 continue = true
@@ -41,15 +48,25 @@ thread = Thread.start(text_queue) do |q|
 
     if not text.nil? then
       log "spawning cw process for: #{text}"
-      IO.popen(ebook2cw, 'w') do |cw|
-        log "spawned pid #{cw.pid}"
-        cw.write text
-      end
+      Tempfile.open(NAME) do |file|
+        options[:o] = file.path
+        cmd = current_command(ebook2cw, options)
+        IO.popen(cmd, 'w') do |cw|
+          log "spawned pid #{cw.pid}"
+          cw.write text
+        end
 
-      if File.exists? AUDIO_FILE then
-        puts 'playing audio'
-        `afplay #{AUDIO_FILE}`
-        File.delete AUDIO_FILE
+        # ebook2cw tries to append 0000.mp3 but only has 79 chars available
+        # it truncates the path at 78 chars, so >78 ends in a single 0
+        chapter = file.path + "0000.mp3"
+        chapter = chapter[0...79]
+        if File.exists? chapter then
+          puts "playing audio from #{chapter}"
+          `afplay "#{chapter}"`
+        else
+          log %Q(*** Audio file "#{chapter}" not found!)
+        end
+        file.delete
       end
     elsif not continue then
       log 'cw generator thread exiting'
