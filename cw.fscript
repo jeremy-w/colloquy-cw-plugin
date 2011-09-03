@@ -98,7 +98,7 @@ processUserCommand := [ :command :arguments :connection :view |
 performNotification := [ :identifier :context :preferences |
 	|msg title desc|
 	title := (context at:'title') string.
-	desc := (context at:'description') string.
+	desc := (context at:'description').
 	msg := 'vvv <CT> <CT> ' ++ title ++ ' = ' ++ title ++ ' = ' ++
 		desc ++ ' <AR> = <AR>'.
 	sys log: msg.
