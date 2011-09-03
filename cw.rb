@@ -3,9 +3,15 @@
 ## to play the corresponding CW.
 require 'thread'
 
+AUDIO_FILE = 'Chapter0000.mp3'
+
 options = {}
 text_queue = []
 mutex = Mutex.new
+
+def log(msg)
+  puts "#{ARGV[0]}: #{msg}"
+end
 
 continue = true
 thread = Thread.start(text_queue) do |q|
@@ -15,18 +21,20 @@ thread = Thread.start(text_queue) do |q|
     mutex.unlock
 
     if not text.nil? then
-      puts 'spawning cw process'
+      log "spawning cw process for: #{text}"
       cw = IO.popen('ebook2cw', 'w')
-      puts 'spawned pid #{cw.pid}'
+      log "spawned pid #{cw.pid}"
       cw.write text
       cw.close
 
-      puts 'playing audio'
-      `afplay Chapter0000.mp3`
-      `rm Chapter0000.mp3`
+      if File.exists? AUDIO_FILE then
+        puts 'playing audio'
+        `afplay #{AUDIO_FILE}`
+        File.delete AUDIO_FILE
+      end
     elsif not continue then
       puts 'cw generator thread exiting'
-      Thread.current.exit 0
+      Thread.current.exit
     end
   end
 end
@@ -40,5 +48,5 @@ end
 # stdin closed - time to leave
 continue = false
 thread.join
-puts 'cw generator exiting now'
+log "exiting"
 0
