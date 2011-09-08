@@ -97,7 +97,7 @@ processUserCommand := [ :command :arguments :connection :view |
 "perform a notification"
 performNotification := [ :identifier :context :preferences |
 	|msg title desc|
-	title := (context at:'title') string.
+	title := (context at:'title').
 	desc := (context at:'description').
 	msg := 'vvv <CT> <CT> ' ++ title ++ ' = ' ++ title ++ ' = ' ++
 		desc ++ ' <AR> = <AR>'.
