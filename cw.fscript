@@ -94,17 +94,6 @@ processUserCommand := [ :command :arguments :connection :view |
 	false.
 ].
 
-"perform a notification"
-performNotification := [ :identifier :context :preferences |
-	|msg title desc|
-	title := (context at:'title').
-	desc := (context at:'description').
-	msg := 'vvv <CT> <CT> ' ++ title ++ ' = ' ++ title ++ ' = ' ++
-		desc ++ ' <AR> = <AR>'.
-	sys log: msg.
-	task_write value:TASK value:msg.
-].
-
 "called for each incoming message, the message is mutable"
 "message : JVMutableChatMessage
  view : id<JVChatViewController>
