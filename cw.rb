@@ -4,7 +4,7 @@
 require 'thread'
 require 'tempfile'
 
-options = {}
+options = {:u => '', :w => 35}
 text_queue = []
 mutex = Mutex.new
 cv = ConditionVariable.new
@@ -29,7 +29,11 @@ def current_command(ebook2cw, options)
   # IO.popen() needs shell-style quoting.
   cmd = '"' + ebook2cw + '"'
   options.each do |k, v|
-    cmd += %Q{ -#{k} "#{v}"}
+    if v.size > 0 then
+      cmd += %Q{ -#{k} "#{v}"}
+    else
+      cmd += %Q{ -#{k}}
+    end
   end
   cmd
 end
