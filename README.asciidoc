@@ -1,0 +1,80 @@
+Colloquy CW Plugin
+==================
+Jeremy W. Sherman
+
+License
+-------
+The plugin and its source are released under the BSD 2-clause license.
+Please refer to 'COPYING' for the full text of the license.
+
+Description
+-----------
+Colloquy CW Plugin is a plugin for the
+link:http://colloquy.info[Colloquy IRC client.]
+It converts your chat transcript into Morse code.
+This allows you to listen to a channel without having to
+flip over to Colloquy to read the full text.
+You can also disable the message bubbles once you are confident
+in your ability to understand the code.
+
+Motivation
+----------
+I developed this plugin when I started relearning CW.
+A little practice here and there is good,
+but I wanted an easy way to weave CW into my everyday life.
+IRC as Morse code seemed the simplest and most entertaining route.
+
+Installation
+------------
+To install Colloquy CW Plugin for your user account,
+run +deploy+ from the repository root directory.
+
+Dependencies
+------------
+You must have +ebook2cw+ to convert text to Morse code audio.
+Place a copy in your path, and +deploy+ will find and use it
+automatically.
+
++ebook2cw+ was written by Fabian Kurz (DJ1YFK) and is available from
+link:http://fkurz.net/ham/ebook2cw.html[its author's website.]
+A Mac binary is available from
+link:http://lategahn.2log.de/index.php?ebook2cw-for-the-mac[].
+
+Using the Plugin
+----------------
+Once installed, Colloquy will load the plugin the next time
+it starts. You can load it sooner by issuing the command:
+
+------
+/fscript load cw
+------
+
+from within Colloquy.
+
+Other commands you may find useful are:
+
+----
+/fscript reload cw
+/fscript unload cw
+----
+
+Currently, the plugin cannot be selectively enabled for certain
+channels, nor can the CW generated be configured without editing
+the source. To change the CW settings, add the appropriate
++ebook2cw+ option flags to the +options+ hash in 'cw.rb'.
+For example, to set the speed of the generated code to 30 WPM, you would write:
+
+----
+options = {'w' => '30'}
+----
+
+to have +cw.rb+ pass the option +-w 30+ to +ebook2cw+.
+
+Future Work
+-----------
+- Tweak the formatting of messages following more usage.
+- Route +ebook2cw+ output to +/dev/null+ to clean logs.
+- Allow configuring the plugin via +/cw+ commands
+  (+/cw help+, +/cw wpm 30+, etc.).
+- Allow restricting the CW conversion to certain channels.
+- Persist settings.

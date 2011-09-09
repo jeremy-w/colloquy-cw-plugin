@@ -12,6 +12,7 @@
 # Generated files
 build/
 *.[oa]
+README.html
 
 # Other source repository archive directories (protects when importing)
 .hg
