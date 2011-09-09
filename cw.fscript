@@ -102,7 +102,7 @@ performNotification := [ :identifier :context :preferences |
 	msg := 'vvv <CT> <CT> ' ++ title ++ ' = ' ++ title ++ ' = ' ++
 		desc ++ ' <AR> = <AR>'.
 	sys log: msg.
-	write_task value:TASK value:msg.
+	task_write value:TASK value:msg.
 ].
 
 "called for each incoming message, the message is mutable"
