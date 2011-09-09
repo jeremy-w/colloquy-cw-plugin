@@ -31,23 +31,18 @@ task_stdin := [ :task |
 	|handle|
 	ifTask value:task value:[
 		|pipe|
-		sys log: 'grabbing pipe.'.
 		pipe := task standardInput.
-		sys log: 'got pipe'.
 		handle := pipe fileHandleForWriting.
 	].
 	handle.
 ].
 
 task_stop := [ :task |
-	sys log:'in task_stop'.
 	ifTask value:task value:[
 		|handle|
 		sys log: 'stopping task by closing stdin'.
 		handle := task_stdin value:task.
-		sys log: 'closing now'.
 		handle ~~ nil ifTrue:[handle closeFile].
-		sys log: 'did close'.
 	].
 ].
 
